@@ -35,7 +35,7 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function 
+ 
 
 try:
     input = raw_input
@@ -96,7 +96,7 @@ def memory():
     
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -386,8 +386,8 @@ def build_weighted_adjacency(graph):
 
     N_clusters = adjacency_matrix.shape[0]
     c = 0
-    for i in xrange(N_clusters - 1):
-        for j in xrange(i + 1, N_clusters):
+    for i in range(N_clusters - 1):
+        for j in range(i + 1, N_clusters):
             if adjacency_matrix[i, j]:
                 x = graph.es['weight'][c]
                 adjacency_matrix[i, j] = x
@@ -405,7 +405,7 @@ def handle_off_diagonal_zeros(M):
     n = M.shape[0]
 
     zeros = np.where(M == 0)
-    for i in xrange(zeros[0].size):
+    for i in range(zeros[0].size):
         if zeros[0][i] != zeros[1][i]:
             M[zeros[0][i], zeros[1][i]] = eensy
     M[np.diag_indices(n)] = 0
@@ -539,10 +539,10 @@ def tree_path_integrals(hdf5_file_name, N_runs, cluster_dims_list, consensus_lab
 
     cluster_separators = np.cumsum(cluster_dims_list)
 
-    for a in xrange(N_clusters - 1):
+    for a in range(N_clusters - 1):
         cells_in_a = np.where(consensus_labels == a)[0]
 
-        for b in xrange(a+1, N_clusters):
+        for b in range(a+1, N_clusters):
             cells_in_b = np.where(consensus_labels == b)[0]
 
             count = 0
@@ -550,7 +550,7 @@ def tree_path_integrals(hdf5_file_name, N_runs, cluster_dims_list, consensus_lab
             counts_dict = defaultdict(int)
             weights_dict = defaultdict(float)
  
-            for run in xrange(N_runs):
+            for run in range(N_runs):
                 if cells_in_a.size == 1 and (cluster_separators[run + 1] - cluster_separators[run]) == 1:
                     single_elt = cluster_runs_adjacency[cells_in_a, cluster_separators[run]]
                     if single_elt == 1:
@@ -631,10 +631,10 @@ def tree_path_integrals(hdf5_file_name, N_runs, cluster_dims_list, consensus_lab
                     for time_step in np.unique(time_steps_values):
                         idx = np.where(time_steps_values == time_step)
                     
-                        new_x = map(lambda i: cluster_IDs_a[i], idx[0])
+                        new_x = [cluster_IDs_a[i] for i in idx[0]]
                         new_x = np.array(new_x, dtype = int)
                     
-                        new_y = map(lambda i: cluster_IDs_b[i], idx[1])
+                        new_y = [cluster_IDs_b[i] for i in idx[1]]
                         new_y = np.array(new_y, dtype = int)
                     
                         mapped_idx = (new_x, new_y)
@@ -662,16 +662,16 @@ def tree_path_integrals(hdf5_file_name, N_runs, cluster_dims_list, consensus_lab
                 time_steps_counts = np.ravel(time_steps_counts)
                 time_steps_values = np.ravel(time_steps_values)
                 time_steps_weights = np.ravel(time_steps_weights)
-                for i in xrange(n_a * n_b):
+                for i in range(n_a * n_b):
                     counts_dict[time_steps_values[i]] += time_steps_counts[i]
                     weights_dict[time_steps_values[i]] += time_steps_weights[i]
                         
                 count += 1 
 
             if count > 0:
-                time_steps = np.array(counts_dict.keys(), dtype = int)
-                counts = np.array(counts_dict.values(), dtype = int)
-                weights = np.array(weights_dict.values(), dtype = float)
+                time_steps = np.array(list(counts_dict.keys()), dtype = int)
+                counts = np.array(list(counts_dict.values()), dtype = int)
+                weights = np.array(list(weights_dict.values()), dtype = float)
                 
                 consensus_distributions_values.append(time_steps)
                 consensus_distributions_counts.append(weights)
@@ -734,7 +734,7 @@ def one_to_max(array_in):
 
     last = np.nan
     current_index = -1
-    for i in xrange(N_in):
+    for i in range(N_in):
         if last != sorted_array[i] or np.isnan(last):
             last = sorted_array[i]
             current_index += 1
@@ -806,7 +806,7 @@ def MST_coloring(data, consensus_labels):
     N_clusters = np.amax(consensus_labels) + 1
 
     cc_centroids = np.zeros((N_clusters, data.shape[1]), dtype = float)
-    for cluster_ID in xrange(N_clusters):
+    for cluster_ID in range(N_clusters):
         cc_centroids[cluster_ID] = np.median(rotated_data[np.where(consensus_labels == cluster_ID)[0]], axis = 0) 
 
     cc_centroids = pca.transform(cc_centroids)
@@ -819,7 +819,7 @@ def MST_coloring(data, consensus_labels):
     cc_RGB = cc_RGB.astype(dtype = int)
     cc_RGB = np.clip(cc_RGB, 0, 255)
 
-    cc_colors = ["rgb({}, {}, {})".format(cc_RGB[i, 0], cc_RGB[i, 1], cc_RGB[i, 2]) for i in xrange(N_clusters)]
+    cc_colors = ["rgb({}, {}, {})".format(cc_RGB[i, 0], cc_RGB[i, 1], cc_RGB[i, 2]) for i in range(N_clusters)]
 
     return cc_colors
 
@@ -1004,7 +1004,7 @@ def fill_cluster_runs_matrix(holder, sampled_indices, cluster_labels, centroids,
             return 'ERROR'
 
         if method in {'affinity_propagation', 'hierarchical', 'k-means'}:
-            subsamples_matrix[run] = random.sample(xrange(N_samples), subsample_size)
+            subsamples_matrix[run] = random.sample(range(N_samples), subsample_size)
         else:
             run += 1
             holder = holder._replace(run = run)
@@ -1041,7 +1041,7 @@ def fill_cluster_runs_matrix(holder, sampled_indices, cluster_labels, centroids,
                 return 'ERROR'
 
             if method in {'affinity_propagation', 'k-means'}:
-                subsamples_matrix[run] = random.sample(xrange(N_samples), subsample_size)
+                subsamples_matrix[run] = random.sample(range(N_samples), subsample_size)
             else:
                 run += 1
                 holder = holder._replace(run = run)
@@ -1066,12 +1066,12 @@ def output_ensemble_distances_distributions(hdf5_file_name, exclude_nodes,
         # before any call to the procedure 'handle_disconnected_graph'
 
         c = 0
-        for a in xrange(N_clusters - 1):
+        for a in range(N_clusters - 1):
             if a in exclude_nodes:
                 c += N_clusters - a - 1
                 continue
 
-            for b in xrange(a + 1, N_clusters):
+            for b in range(a + 1, N_clusters):
                 if b in exclude_nodes:
                     c += 1
                     continue
@@ -1080,7 +1080,7 @@ def output_ensemble_distances_distributions(hdf5_file_name, exclude_nodes,
                 counts = all_counts[c]
 
                 n = values.size
-                for i in xrange(n):
+                for i in range(n):
                     f.write('({}, {})\t'.format(values[i], counts[i]))
                 f.write('\n')
 
@@ -1168,7 +1168,7 @@ def ECLAIR_processing(hdf5_file_name, data_info, clustering_parameters,
     local_densities = Density_Sampling.get_local_densities(data, kernel_mult, metric)
 
     subsamples_matrix = np.zeros((N_runs, subsample_size), dtype = np.int32)
-    for run in xrange(N_runs):
+    for run in range(N_runs):
         samples_kept = Density_Sampling.density_sampling(data, local_densities,
                           metric, kernel_mult, desired_samples = subsample_size)
         
@@ -1176,7 +1176,7 @@ def ECLAIR_processing(hdf5_file_name, data_info, clustering_parameters,
 
         if N_kept > subsample_size:
             samples_kept.sort()
-            discard_ind = random.sample(xrange(N_kept), N_kept - subsample_size)
+            discard_ind = random.sample(range(N_kept), N_kept - subsample_size)
             samples_kept = np.delete(samples_kept, discard_ind)
 
         elif N_kept < subsample_size:
@@ -1259,7 +1259,7 @@ def ECLAIR_processing(hdf5_file_name, data_info, clustering_parameters,
                    newline = '\n')
 
     with open(output_directory + '/ECLAIR_ensemble_clustering_files/{}/mst_adjacency_list.txt'.format(name_tag), 'w') as file:
-        for run in xrange(len(mst_adjacency_list)):
+        for run in range(len(mst_adjacency_list)):
             sparse_mat = mst_adjacency_list[run]
 
             file.write("RUN {}\n".format(run))
@@ -1311,7 +1311,7 @@ def ECLAIR_processing(hdf5_file_name, data_info, clustering_parameters,
     g = igraph.Graph.Weighted_Adjacency(consensus_means.tolist(),
                            mode=igraph.ADJ_UPPER, attr = 'weight')
 
-    g.vs['label'] = xrange(N_clusters)
+    g.vs['label'] = range(N_clusters)
     # Building a weighted graph from the matrix of the mean 
     # of pairwise distances between clustered cells. 
 

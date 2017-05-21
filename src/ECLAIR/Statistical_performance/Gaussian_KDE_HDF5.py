@@ -34,7 +34,7 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function
+
 
 from math import pi, sqrt
 import matplotlib
@@ -62,7 +62,7 @@ def memory():
 
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -134,7 +134,7 @@ class gaussian_kde(object):
                 
                 szum = 0
                 chunks_size = get_chunk_size(1, 1)
-                for i in xrange(0, self.__N_training, chunks_size):
+                for i in range(0, self.__N_training, chunks_size):
                     max_ind = min(i + chunks_size, self.__N_training)
                     szum += np.sum(repetitions[0, i:max_ind])
                 
@@ -166,11 +166,11 @@ class gaussian_kde(object):
             if self.repetitions_flag:
                 repetitions = fileh.root.repetitions
 
-            for i in xrange(N_eval):
+            for i in range(N_eval):
                 eval_point = eval_set[:, i, np.newaxis]
 
                 chunks_size = get_chunk_size(self.__N_features, 4)
-                for j in xrange(0, self.__N_training, chunks_size):
+                for j in range(0, self.__N_training, chunks_size):
                     max_ind = min(j + chunks_size, self.__N_training)
         
                     M = dataset[:, j:max_ind]
@@ -254,7 +254,7 @@ class gaussian_kde(object):
             largest = dataset[:, 0]
 
             chunks_size = get_chunk_size(self.__N_features, 4)
-            for i in xrange(0, self.__N_training, chunks_size):
+            for i in range(0, self.__N_training, chunks_size):
                 max_ind = min(i + chunks_size, self.__N_training)
 
                 M = dataset[:, i:max_ind]
@@ -295,7 +295,7 @@ class gaussian_kde(object):
             covariance_matrix = np.zeros((self.__N_features, self.__N_features), dtype = float)
 
             chunks_size = get_chunk_size(self.__N_features, 4)
-            for i in xrange(0, self.__N_training, chunks_size):
+            for i in range(0, self.__N_training, chunks_size):
                 max_ind = min(i + chunks_size, self.__N_training)
 
                 M = dataset[:, i:max_ind]
@@ -304,9 +304,9 @@ class gaussian_kde(object):
                 if self.repetitions_flag:
                     R = repetitions[0, i:max_ind]
             
-                for j in xrange(self.__N_features - 1):
+                for j in range(self.__N_features - 1):
                     M_j = M[j]
-                    for k in xrange(j + 1, self.__N_features):
+                    for k in range(j + 1, self.__N_features):
                         if self.repetitions_flag:
                             x = M[k] * R
                             x = np.inner(M_j, x)

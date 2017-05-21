@@ -65,7 +65,7 @@ def from_pointer_representation(Z, Lambda, Pi):
     sorted_indices = np.argsort(Lambda)
     node_IDs = np.arange(N)
     
-    for i in xrange(N - 1):
+    for i in range(N - 1):
         current_leaf = sorted_indices[i]
         
         pi = Pi[current_leaf]
@@ -97,7 +97,7 @@ def calculate_cluster_sizes(Z):
 
     N = Z.shape[0] + 1
     
-    for i in xrange(N - 1):
+    for i in range(N - 1):
         left_child = int(Z[i, 0])
         right_child = int(Z[i, 1])
         
@@ -137,13 +137,13 @@ def SLINK(data):
     Pi[0] = 0
     Lambda[0] = np.inf
     
-    for i in xrange(1, N):
+    for i in range(1, N):
         Pi[i] = i
         Lambda[i] = np.inf
         
         M[:i] = pairwise_distances(data[i], data[:i], metric = 'manhattan', n_jobs = -1).reshape(i)
             
-        for j in xrange(i):
+        for j in range(i):
             if Lambda[j] >= M[j]:
                 M[Pi[j]] = min(M[Pi[j]], Lambda[j])
                 Lambda[j] = M[j]
@@ -151,7 +151,7 @@ def SLINK(data):
             else:
                 M[Pi[j]] = min(M[Pi[j]], M[j])
                 
-        for j in xrange(i):
+        for j in range(i):
             if Lambda[j] >= Lambda[Pi[j]]:
                 Pi[j] = i
     

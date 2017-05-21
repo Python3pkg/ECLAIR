@@ -34,7 +34,7 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function
+
 
 from collections import OrderedDict
 from fractions import gcd
@@ -42,6 +42,8 @@ import functools
 from itertools import combinations
 from math import ceil, floor, sqrt
 import matplotlib
+import collections
+from functools import reduce
 matplotlib.use('Agg')
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -67,7 +69,7 @@ def memory():
     
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -123,7 +125,7 @@ def counter(_lambda):
 
         @functools.wraps(f)
         def _wrapped(self, *args, **kwargs):
-            if callable(_lambda):
+            if isinstance(_lambda, collections.Callable):
                 ID = _lambda(self)
                 if _wrapped.ID == ID:
                     _wrapped.count += 1
@@ -221,7 +223,7 @@ class tree_edges(object):
         possibilities = [a ** 2, a * b, b ** 2]
         min_value = max(possibilities)
         best_i = None
-        for i in xrange(3):
+        for i in range(3):
             if N <= possibilities[i]:
                 if possibilities[i] < min_value:
                     min_value = possibilities[i]
@@ -253,10 +255,10 @@ class tree_edges(object):
 
         gs = gridspec.GridSpec(a, b)
 
-        edge_list = self.__select_row_indices.keys()
+        edge_list = list(self.__select_row_indices.keys())
 
         edge_distances_std = np.zeros(len(edge_list), float)
-        for i in xrange(len(edge_list)):
+        for i in range(len(edge_list)):
             M = edge_distances_distributions[i]
             M = np.trim_zeros(M, 'b')
 
@@ -301,7 +303,7 @@ class tree_edges(object):
         plt.close(fig)
 
         with open(output_directory + '/edge_distances_std_{}.tsv'.format(tag), 'w') as f:
-            np.savetxt(f, np.vstack((edge_distances_std, zip(*edge_list))), fmt = '%.6f', delimiter = '\t')
+            np.savetxt(f, np.vstack((edge_distances_std, list(zip(*edge_list)))), fmt = '%.6f', delimiter = '\t')
 
         fileh.close()
 
@@ -364,11 +366,11 @@ class tree_edges(object):
         f_in = tables.open_file(contingency_table_file, 'r+')
         contingency_table = f_in.root.inter_trees_group.contingency_table
 
-        row_indices = self.__select_row_indices.values()
+        row_indices = list(self.__select_row_indices.values())
         row_indices = np.array(row_indices, dtype = int, copy = False)
 
         chunks_size = get_chunk_size(contingency_table.shape[1], 4)
-        for i in xrange(0, row_indices.size, chunks_size):
+        for i in range(0, row_indices.size, chunks_size):
             max_ind = min(i + chunks_size, row_indices.size)
 
             chunk_row_indices = row_indices[i:max_ind]

@@ -74,7 +74,7 @@ def memory():
 
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -102,55 +102,55 @@ def user_interface():
     print('*****************************************\n')
 
     try:
-        data_file_name = raw_input("\nECLAIR: provide the path to the file "
+        data_file_name = input("\nECLAIR: provide the path to the file "
                                    "holding the data to be analyzed:\n")
     except:
         data_file_name = ''
     while not os.path.exists(data_file_name):
         try:
-            data_file_name = raw_input("\nECLAIR: this file does not exist. "
+            data_file_name = input("\nECLAIR: this file does not exist. "
                                        "Try again:\n")
         except:
             data_file_name = ''
 
     try:
-        skip_rows = int(input("\nECLAIR: how may rows count as header in this file? "
+        skip_rows = int(eval(input("\nECLAIR: how may rows count as header in this file? "
                               "Enter '0' if the file is not adorned by any "
-                              "header:\n"))
+                              "header:\n")))
     except:
         skip_rows = -1
     while 0 > skip_rows:
         try: 
-            skip_rows = int(input("\nECLAIR: please provide a non-negative "
-                                  "integer:\n")) 
+            skip_rows = int(eval(input("\nECLAIR: please provide a non-negative "
+                                  "integer:\n"))) 
         except:
             skip_rows = -1
 
     try:
-        cell_IDs_column = int(input("\nECLAIR: which column of the data-file "
+        cell_IDs_column = int(eval(input("\nECLAIR: which column of the data-file "
                                     "holds the names, tags or IDs of its samples? "
                                     "Enter '0' for the 1st column, '1' for the "
-                                    "second, etc.:\n"))
+                                    "second, etc.:\n")))
     except:
         cell_IDs_column = -1
     while 0 > cell_IDs_column:
         try:
-            cell_IDs_column = int(input('\nECLAIR: invalid entry. Try again:\n'))
+            cell_IDs_column = int(eval(input('\nECLAIR: invalid entry. Try again:\n')))
         except:
             cell_IDs_column = -1
 
-    answer = str(raw_input("\nECLAIR: does this data-set include some "
+    answer = str(input("\nECLAIR: does this data-set include some "
                            "time information? [Y/n] \n"))
     if answer in {'y', 'Y', 'yes', 'Yes', 'YES', 'yep', 'Yep', 'YEP'}:
         try:
-            time_info_column = int(input("\nECLAIR: provide the column holding "
-                                         "that information:\n"))
+            time_info_column = int(eval(input("\nECLAIR: provide the column holding "
+                                         "that information:\n")))
         except:
             time_info_column = -1
         while 0 > time_info_column:
             try:
-                time_info_column = int(input("\nECLAIR: it must be a non-negative "
-                                             "number. Try again:\n"))
+                time_info_column = int(eval(input("\nECLAIR: it must be a non-negative "
+                                             "number. Try again:\n")))
             except:
                 time_info_column = -1
     elif answer in {'n', 'N', 'no', 'No', 'NO', 'nope', 'Nope', 'non', 'Non', 'NON', 'nada', 'Nada', 'NADA'}:
@@ -160,7 +160,7 @@ def user_interface():
         time_info_column = -1
 
     try:
-        s = raw_input("\nECLAIR: you may choose to exclude some columns "
+        s = input("\nECLAIR: you may choose to exclude some columns "
                       "as features. If this option does not apply, simply press "
                       "'Enter'. Otherwise, provide a list of numbers:\n")
         extra_excluded_columns = [int(i) for i in re.findall(r'\d+', s)]
@@ -168,14 +168,14 @@ def user_interface():
         extra_excluded_columns = None
 
     try:
-        expected_N_samples = int(input("\nECLAIR: please give an estimate "
+        expected_N_samples = int(eval(input("\nECLAIR: please give an estimate "
                                        "of the number of samples in this "
-                                       "data-set:\n"))
+                                       "data-set:\n")))
     except:
         expected_N_samples = -1
     while 0 >= expected_N_samples:
         try:
-            expected_N_samples = int(input('\nPlease provide a positive integer:\n'))
+            expected_N_samples = int(eval(input('\nPlease provide a positive integer:\n')))
         except:
             expected_N_samples = -1
 
@@ -184,35 +184,35 @@ def user_interface():
                           time_info_column)
  
     try:
-        N_runs = int(input("\nECLAIR: please enter the number of trees "
+        N_runs = int(eval(input("\nECLAIR: please enter the number of trees "
                            "that will be bagged into a forest "
-                           "(a value of '50' is recommended):\n"))
+                           "(a value of '50' is recommended):\n")))
     except:
         N_runs = -1
     while 0 >= N_runs:
         try: 
-            N_runs = int(input('\nECLAIR: please provide a positive integer:\n'))
+            N_runs = int(eval(input('\nECLAIR: please provide a positive integer:\n')))
         except:
             N_runs = -1
 
     try:
-        sampling_fraction = float(input("\nECLAIR: how many points do you want "
+        sampling_fraction = float(eval(input("\nECLAIR: how many points do you want "
                                         "to sample from the dataset? "
                                         "Please provide a fraction of the "
-                                        "total number of cells:\n"))
+                                        "total number of cells:\n")))
     except:
         sampling_fraction = -1.0
     while sampling_fraction > 1 and sampling_fraction < 0: 
         try:
-            sampling_fraction = float(input("\nECLAIR: invalid value; "
-                                            "please choose a number in (0;1):\n"))
+            sampling_fraction = float(eval(input("\nECLAIR: invalid value; "
+                                            "please choose a number in (0;1):\n")))
         except:
             sampling_fraction = -1.0
 
-    print('\nECLAIR: choose the clustering algorithm to be applied to each of {:n} subsamples from your data-set.\nAvailable methods: affinity propagation (1), DBSCAN (2), hierarchical clustering (3) & k-means (4)\n'.format(N_runs))
+    print(('\nECLAIR: choose the clustering algorithm to be applied to each of {:n} subsamples from your data-set.\nAvailable methods: affinity propagation (1), DBSCAN (2), hierarchical clustering (3) & k-means (4)\n'.format(N_runs)))
     while True:
         try:
-            method = int(input())
+            method = int(eval(input()))
         except:
             method = -1
         if method in {1,2,3, 4}:
@@ -231,18 +231,18 @@ def user_interface():
             recommended_max_iter = int(floor(50 / sqrt(ratio)))
 
         try:
-            max_iter = int(input('\nECLAIR: how many rounds of messages-passing among the data-points do you wish be performed? (Recommended value, based on the size of your data-set and the free memory on your computer: {:n})\n'.format(recommended_max_iter)))
+            max_iter = int(eval(input('\nECLAIR: how many rounds of messages-passing among the data-points do you wish be performed? (Recommended value, based on the size of your data-set and the free memory on your computer: {:n})\n'.format(recommended_max_iter))))
         except:
             max_iter = -1
         while 0 >= max_iter:
             try:
-                max_iter = int(input("\nECLAIR: invalid entry; "
-                                     "please provide a positive integer:\n"))
+                max_iter = int(eval(input("\nECLAIR: invalid entry; "
+                                     "please provide a positive integer:\n")))
             except:
                 max_iter = -1
 
         if max_iter > recommended_max_iter:
-            answer = str(raw_input("\nECLAIR: affinity-propagation is quite "
+            answer = str(input("\nECLAIR: affinity-propagation is quite "
                                    "time-consuming. It also requires matrices of "
                                    "similarities, availabilities and responsibilities "
                                    "whose size possibly exceeds what can fit in memory "
@@ -253,23 +253,23 @@ def user_interface():
                                    "sure you want to proceed with this value? [Y/n]\n"))
             if answer in {'n', 'N', 'no', 'No', 'NO', 'nope', 'Nope', 'NOPE'}:
                 try:
-                    max_iter = int(input("\nECLAIR: wise choice! Please enter "
-                                         "a new value for this parameter: "))
+                    max_iter = int(eval(input("\nECLAIR: wise choice! Please enter "
+                                         "a new value for this parameter: ")))
                 except:
                     max_iter = -1
                 while 0 >= max_iter and max_iter > recommended_max_iter:
                     try:
-                        max_iter = int(input('\nECLAIR: please provide a positive integer, less than {:n}\n'.format(recommended_max_iter)))
+                        max_iter = int(eval(input('\nECLAIR: please provide a positive integer, less than {:n}\n'.format(recommended_max_iter))))
                     except:
                         max_iter = -1 
         
         while True:
             try:
-                convergence_iter = int(input("\nECLAIR: after how many iterations "
+                convergence_iter = int(eval(input("\nECLAIR: after how many iterations "
                                              "with no change in the number of "
                                              "estimated clusters should affinity "
                                              "propagation stop? "
-                                             "(Recommended value: 15)\n"))
+                                             "(Recommended value: 15)\n")))
             except:
                 convergence_iter = -1
 
@@ -289,32 +289,32 @@ def user_interface():
                                               convergence_iter)
 
     elif method == 2:
-        print("\nECLAIR: you have chosen to perform a Density-Based Spatial Clustering of Applications with Noise on each of {:n} samples from the data-set. Unless you decide to manually enter a value for the radius 'epsilon', this parameter - which determining density reachability - will be determined automatically upon inspection of the distribution of pairwise distances for your data-set and based on a choice of metric you will be asked to provide.".format(N_runs)
-)
+        print(("\nECLAIR: you have chosen to perform a Density-Based Spatial Clustering of Applications with Noise on each of {:n} samples from the data-set. Unless you decide to manually enter a value for the radius 'epsilon', this parameter - which determining density reachability - will be determined automatically upon inspection of the distribution of pairwise distances for your data-set and based on a choice of metric you will be asked to provide.".format(N_runs)
+))
 
         try:
-            minPts = int(input("\nECLAIR: how many points are needed to form "
-                               "a dense region?\n"))
+            minPts = int(eval(input("\nECLAIR: how many points are needed to form "
+                               "a dense region?\n")))
         except:
             minPts = -1
         while 0 >= minPts:
             try:
-                minPts = int(input("\nECLAIR: sorry but 'minPts' must be "
-                                   "a positive integer; try again:\n"))
+                minPts = int(eval(input("\nECLAIR: sorry but 'minPts' must be "
+                                   "a positive integer; try again:\n")))
             except:
                 minPts = -1
 
-        answer = str(raw_input("\nECLAIR: do you want to provide a value of the parameter 'epsilon' for DBSCAN? [Y/n] \nIf not, as is recommended but might take some time, 'epsilon' will be determined in an adpative way from a {:n}-distance graph.\n".format(minPts)))
+        answer = str(input("\nECLAIR: do you want to provide a value of the parameter 'epsilon' for DBSCAN? [Y/n] \nIf not, as is recommended but might take some time, 'epsilon' will be determined in an adpative way from a {:n}-distance graph.\n".format(minPts)))
         if answer in {'y', 'Y', 'yes', 'Yes', 'YES', 'yep', 'Yep', 'YEP', 'Yoh, man!', 'si', 'Si', 'SI', 'oui', 'Oui', 'OUI', 'da','Da', 'DA'}:
             try:
-                eps = float(input("\nECLAIR: please provide a value for "
-                                  "'epsilon':\n"))
+                eps = float(eval(input("\nECLAIR: please provide a value for "
+                                  "'epsilon':\n")))
             except:
                 eps = 0.0
             while eps <= 0.0:
                 try:
-                    eps = float(input("\nECLAIR: you must provide a "
-                                      "positive number. Give it another stab:\n"))
+                    eps = float(eval(input("\nECLAIR: you must provide a "
+                                      "positive number. Give it another stab:\n")))
                 except:
                     eps = 0.0
         elif answer in {'n', 'N', 'no', 'No', 'NO', 'nope', 'Nope', 'non', 'Non', 'NON', 'nada', 'Nada', 'NADA'}:
@@ -326,18 +326,18 @@ def user_interface():
         quantile = 50
 
         if eps is None:
-            answer = str(raw_input("\nECLAIR: do you want to specify epsilon as a particular quantile to a distribution of {:n}-nearest distances? Please answer by [Y/n]. If not, epsilon will default to the median of that distribution.\n".format(minPts)))
+            answer = str(input("\nECLAIR: do you want to specify epsilon as a particular quantile to a distribution of {:n}-nearest distances? Please answer by [Y/n]. If not, epsilon will default to the median of that distribution.\n".format(minPts)))
             if answer in {'y', 'Y', 'yes', 'Yes', 'YES', 'yep', 'Yep', 'YEP','si', 'Si', 'SI', 'oui', 'Oui', 'OUI', 'da','Da', 'DA'}:
                 try:
-                    quantile = float(input("\nECLAIR: please provide a value "
-                                           "for the quantile:\n"))
+                    quantile = float(eval(input("\nECLAIR: please provide a value "
+                                           "for the quantile:\n")))
                 except:
                     quantile = -1.0
                 while quantile < 0 or quantile > 100:
                     try:
-                        quantile = float(input("\nECLAIR: sorry but try again "
+                        quantile = float(eval(input("\nECLAIR: sorry but try again "
                                                "and provide a real number "
-                                               "within [0; 100]:\n"))
+                                               "within [0; 100]:\n")))
                     except:
                         quantile = -1.0
         
@@ -349,14 +349,14 @@ def user_interface():
                          'sokalsneath', 'wminkowski', 'yule']
 
         try:
-            metric = str(raw_input("\nECLAIR: metric for calculating the distance "
+            metric = str(input("\nECLAIR: metric for calculating the distance "
                                    "between instances in your data-set "
                                    "(default would be 'minkowski'):\n")).lower()
         except:
             metric = ''
         while metric not in valid_metrics:
             try:
-                metric = str(raw_input('\nECLAIR: this choice is not recognized. Please pick one from:\n{0}\n'.format(valid_metrics))).lower()
+                metric = str(input('\nECLAIR: this choice is not recognized. Please pick one from:\n{0}\n'.format(valid_metrics))).lower()
             except:
                 metric = ''
 
@@ -364,13 +364,13 @@ def user_interface():
 
     else:
         try:
-            n_clusters = int(input('\nECLAIR: how many centroids to generate for each run of {0} clustering?\n'.format('hierarchical' if method == 3 else 'k-means')))
+            n_clusters = int(eval(input('\nECLAIR: how many centroids to generate for each run of {0} clustering?\n'.format('hierarchical' if method == 3 else 'k-means'))))
         except:
             n_clusters = -1
         while 0 >= n_clusters:
             try:
-                n_clusters = int(input("\nECLAIR: invalid entry; please correct "
-                                       "by providing a positive integer:\n"))
+                n_clusters = int(eval(input("\nECLAIR: invalid entry; please correct "
+                                       "by providing a positive integer:\n")))
             except:
                 n_clusters = -1
 
@@ -380,17 +380,17 @@ def user_interface():
         else:
             clustering_parameters = KMEANS_parameters('k-means', n_clusters)
 
-    answer = str(raw_input("\nECLAIR: the total number of consensus clusters defaults to the highest number of clusters encountered in each of the {:n} independent runs of subsamplings and clusterings. Do you want to provide a value instead? [Y/n]\n".format(N_runs)))
+    answer = str(input("\nECLAIR: the total number of consensus clusters defaults to the highest number of clusters encountered in each of the {:n} independent runs of subsamplings and clusterings. Do you want to provide a value instead? [Y/n]\n".format(N_runs)))
     if answer in {'y', 'Y', 'yes', 'Yes', 'YES', 'yep', 'Yep', 'YEP', 'Yoh, man!', 'si', 'Si', 'SI', 'oui', 'Oui', 'OUI', 'da','Da', 'DA'}:
         try:
-            N_cc = int(input("\nECLAIR: how many clusters should make up "
-                             "your consensus clustering?\n"))
+            N_cc = int(eval(input("\nECLAIR: how many clusters should make up "
+                             "your consensus clustering?\n")))
         except:
             N_cc = 0
         while N_cc <= 0:
             try:
-                N_cc = int(input("\nECLAIR: you should enter a positive integer. "
-                                 "Please do so now:\n"))
+                N_cc = int(eval(input("\nECLAIR: you should enter a positive integer. "
+                                 "Please do so now:\n")))
             except:
                 N_cc = 0
 
@@ -409,7 +409,7 @@ def user_interface():
     time_now = datetime.datetime.today()
     format = "%Y-%m-%d %H:%M:%S"
     time_now = str(time_now.strftime(format))
-    print('\nECLAIR\t INFO\t {}: ready to proceed!\n'.format(time_now))
+    print(('\nECLAIR\t INFO\t {}: ready to proceed!\n'.format(time_now)))
 
     print('\n')
 

@@ -34,16 +34,17 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function
+
 
 from . import Class_tree_edges, Gaussian_KDE_HDF5
 
 from collections import defaultdict, OrderedDict
 import functools
 import inspect
-from itertools import combinations, izip
+from itertools import combinations
 from math import sqrt
 import matplotlib
+from functools import reduce
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
@@ -76,7 +77,7 @@ def memory():
 
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -155,7 +156,7 @@ def get_ranks(observations, number_of_duplicates):
     all_indices = np.arange(0, ranks.size, dtype = int)
 
     max_rank = int(np.amax(ranks))
-    for rank in xrange(1, max_rank + 1):
+    for rank in range(1, max_rank + 1):
         ind = np.where(temp_ranks == rank)[0]
         used_indices = np.append(used_indices, ind)
         not_used_yet = np.setdiff1d(all_indices, used_indices, True)
@@ -172,8 +173,8 @@ def build_contingency_track_calls(f):
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        args_name = list(OrderedDict.fromkeys(inspect.getargspec(f)[0] + kwargs.keys()))
-        args_dict = OrderedDict(list(izip(args_name, args)) + list(kwargs.iteritems()))
+        args_name = list(OrderedDict.fromkeys(inspect.getargspec(f)[0] + list(kwargs.keys())))
+        args_dict = OrderedDict(list(zip(args_name, args)) + list(kwargs.items()))
 
         name = args_dict.get('hdf5_file_name', None)
         wrapper.hdf5_file_name = name
@@ -237,7 +238,7 @@ def build_contingency_table(hdf5_file_name, cluster_IDs_1, cluster_IDs_2,
     else:
         temp = cluster_IDs_1
 
-    for c_1 in xrange(N_1):
+    for c_1 in range(N_1):
         cells_in_c_1 = np.where(temp == c_1)[0]
         clusters_1_to_cells[int(c_1)].append(cells_in_c_1)    
 
@@ -248,7 +249,7 @@ def build_contingency_table(hdf5_file_name, cluster_IDs_1, cluster_IDs_2,
     else:
         temp = cluster_IDs_2
 
-    for c_2 in xrange(N_2):
+    for c_2 in range(N_2):
         cells_in_c_2 = np.where(temp == c_2)[0]
         clusters_2_to_cells[int(c_2)].append(cells_in_c_2)
 
@@ -290,7 +291,7 @@ def build_contingency_table(hdf5_file_name, cluster_IDs_1, cluster_IDs_2,
 
             contingency_table[i, j] = N_overlapping
 
-        for l in xrange(N_2 * (N_2 - 1) / 2, N_2 * (N_2 + 1) / 2):
+        for l in range(N_2 * (N_2 - 1) / 2, N_2 * (N_2 + 1) / 2):
             cells_2 = clusters_2_to_cells[l - (N_2 * (N_2 - 1) / 2)][0]
 
             if (test_set is not None) and cells_2.size == 0:
@@ -302,7 +303,7 @@ def build_contingency_table(hdf5_file_name, cluster_IDs_1, cluster_IDs_2,
 
             contingency_table[i, l] = n_1_a * n_1_b
 
-    for k in xrange(N_1 * (N_1 - 1) / 2, N_1 * (N_1 + 1) / 2):
+    for k in range(N_1 * (N_1 - 1) / 2, N_1 * (N_1 + 1) / 2):
         cells_1 = clusters_1_to_cells[k - (N_1 * (N_1 - 1) / 2)][0]
 
         if (test_set is not None) and cells_1.size == 0:
@@ -323,7 +324,7 @@ def build_contingency_table(hdf5_file_name, cluster_IDs_1, cluster_IDs_2,
 
             contingency_table[k, j] = n_2_d * n_2_e
 
-        for l in xrange(N_2 * (N_2 - 1) / 2, N_2 * (N_2 + 1) / 2):
+        for l in range(N_2 * (N_2 - 1) / 2, N_2 * (N_2 + 1) / 2):
             cells_2 = clusters_2_to_cells[l - (N_2 * (N_2 - 1) / 2)][0]
 
             if (test_set is not None) and cells_2.size == 0:
@@ -386,7 +387,7 @@ def get_mean_and_variance(hdf5_file_name, axis, N_samples, dist_mat,
     
 
     chunks_size = get_chunk_size(n2, 2)
-    for i in xrange(0, n1, chunks_size):
+    for i in range(0, n1, chunks_size):
         if axis:
             M = contingency_table[:, i:min(i+chunks_size, n1)]
         else: 
@@ -446,7 +447,7 @@ def one_to_max(array_in):
 
     last = np.nan
     current_index = -1
-    for i in xrange(N_in):
+    for i in range(N_in):
         if last != sorted_array[i] or np.isnan(last):
             last = sorted_array[i]
             current_index += 1
@@ -736,7 +737,7 @@ def pairwise_distances_correlations(hdf5_file_name, cluster_IDs_1, cluster_IDs_2
     
     c = 0    
     chunks_size = get_chunk_size(N_2 * (N_2 + 1) / 2, 4)
-    for i in xrange(0, N_1 * (N_1 + 1) / 2, chunks_size):
+    for i in range(0, N_1 * (N_1 + 1) / 2, chunks_size):
         max_ind = min(i + chunks_size, N_1 * (N_1 + 1) / 2)
 
         M = contingency_table[i:max_ind]
@@ -785,7 +786,7 @@ def pairwise_distances_correlations(hdf5_file_name, cluster_IDs_1, cluster_IDs_2
         repetitions = tmp_fh.create_earray(tmp_fh.root, 'repetitions', tables.Int64Atom(), (1, 0), filters = None)
 
         c = 0
-        for i in xrange(N_1 * (N_1 + 1) / 2):
+        for i in range(N_1 * (N_1 + 1) / 2):
             contingency_table_i = contingency_table[i]
             contingency_table_i = np.compress(valid_cols, contingency_table_i)
 
@@ -950,7 +951,7 @@ def chi_squared_and_likelihood_ratio(hdf5_file_name, median_dist_1, median_dist_
             n2, n1 = n1, n2
     
         chunks_size = get_chunk_size(n2, 2)
-        for i in xrange(0, n1, chunks_size):
+        for i in range(0, n1, chunks_size):
             if axis:
                 M = contingency_table[:, i:min(i+chunks_size, n1)]
             else: 
@@ -985,7 +986,7 @@ def chi_squared_and_likelihood_ratio(hdf5_file_name, median_dist_1, median_dist_
 
     c = 0
     chunks_size = get_chunk_size(N_2 * (N_2 + 1) / 2, 4)
-    for i in xrange(0, N_1 * (N_1 + 1) / 2, chunks_size):
+    for i in range(0, N_1 * (N_1 + 1) / 2, chunks_size):
         max_ind = min(i + chunks_size, N_1 * (N_1 + 1) / 2)
 
         M = contingency_table[i:max_ind]
@@ -1265,7 +1266,7 @@ def info_theory_heatmap(scores_matrix, mean_score, output_directory,
     plt.text(3, -1.3, 'Heatmap of pairwise {measure_flag} scores\nbetween distinct clusterings.\nAverage {measure_flag} score between\ndistinct clusterings = {mean_score}'.format(**locals()), 
              fontsize = 6, horizontalalignment = 'center')
 
-    rows = list('C_{}'.format(i) for i in xrange(N_trees))
+    rows = list('C_{}'.format(i) for i in range(N_trees))
     columns = rows
     plt.xticks(np.arange(N_trees) + 0.5, columns, fontsize = 6, rotation = 'vertical')
     plt.yticks(np.arange(N_trees) + 0.5, rows, fontsize = 6)
@@ -1343,7 +1344,7 @@ def inter_clusterings_info_theory_measures(input_directory, name_tags,
     jensen_shannon_mean = 0.0
     jensen_shannon_std = 0.0
 
-    for i in xrange(N_trees - 1):
+    for i in range(N_trees - 1):
         with open(input_directory + '/'+ str(name_tags[i]) + '/consensus_labels.txt', 'r') as f:
             full_cluster_IDs_i = np.loadtxt(f, dtype = int)
   
@@ -1355,7 +1356,7 @@ def inter_clusterings_info_theory_measures(input_directory, name_tags,
         else:
             assert N_samples == full_cluster_IDs_i.size
 
-        for j in xrange(i + 1, N_trees):
+        for j in range(i + 1, N_trees):
             with open(input_directory + '/' + str(name_tags[j]) + '/consensus_labels.txt', 'r') as f:
                 cluster_IDs_j = np.loadtxt(f, dtype = int)
 
@@ -1505,7 +1506,7 @@ def robustness_metrics(max_N_clusters, input_directory, name_tags, output_direct
             
         print('\nECLAIR_robustness\t INFO\t:\nreference tree used for tree edges distributions has its information stored in {}.\n'.format(ref_tree))
 
-    for i in xrange(N_trees - 1):
+    for i in range(N_trees - 1):
         dir_i = input_directory + '/' + str(name_tags[i])
         cluster_IDs_i, dist_means_i, dist_medians_i, dist_std_i = get_data(dir_i)
 
@@ -1515,7 +1516,7 @@ def robustness_metrics(max_N_clusters, input_directory, name_tags, output_direct
 
         with Class_tree_edges.tree_edges(dir_i, np.amax(cluster_IDs_i), max_N_clusters - 1) as tree_edges_obj:
 
-            for j in xrange(i + 1, N_trees):
+            for j in range(i + 1, N_trees):
                 dir_j = input_directory + '/' + str(name_tags[j])
                 cluster_IDs_j, dist_means_j, dist_medians_j, dist_std_j = get_data(dir_j)
 

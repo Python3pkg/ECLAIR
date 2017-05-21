@@ -34,7 +34,7 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function
+
 
 from ..Build_instance import ECLAIR_core as ECLR
 from .Statistical_tests import robustness_metrics
@@ -51,6 +51,7 @@ from tempfile import NamedTemporaryFile
 import tarfile
 import time
 import zipfile
+from functools import reduce
 
 
 __all__ = ['ECLAIR_generator', 'experiment_1', 'experiment_2', 'experiment_3']
@@ -65,7 +66,7 @@ def extract_file(path, output_directory = '.'):
     elif path.endswith('.tar.bz2') or path.endswith('.tbz'):
         opener, mode = tarfile.open, 'r:bz2'
     else: 
-        raise ValueError, "\nERROR: ECLAIR: Robustness_analysis: failed to extract {0}; no appropriate extractor could be found".format(path)
+        raise ValueError("\nERROR: ECLAIR: Robustness_analysis: failed to extract {0}; no appropriate extractor could be found".format(path))
     
     cwd = os.getcwd()
     os.chdir(output_directory)
@@ -165,7 +166,7 @@ def ECLAIR_generator(data_file_name, sampling_fraction, N_runs, N_iter,
     elif data_flag == 'qPCR':
         skiprows = 1
         delimiter = '\t'
-        usecols = xrange(1, 49)
+        usecols = range(1, 49)
     # keeping open the addition of other datasets 
     # to be submitted to the present routine
 
@@ -234,7 +235,7 @@ def ECLAIR_generator(data_file_name, sampling_fraction, N_runs, N_iter,
         method = clustering_parameters.clustering_method
 
         cluster_IDs = upsample(test_indices, cluster_IDs, data, method, 
-                               xrange(1, data.shape[1]))
+                               range(1, data.shape[1]))
 
         os.remove(cluster_IDs_file)
 
@@ -267,7 +268,7 @@ def upsample(test_indices, training_set_cluster_IDs, data,
     max_ID = np.amax(training_set_cluster_IDs)
     centroids = np.zeros((max_ID + 1, data.shape[1]), dtype = float)
 
-    for cluster in xrange(max_ID + 1):
+    for cluster in range(max_ID + 1):
         samples_in_cluster = np.where(training_set_cluster_IDs == cluster)[0]
         if method == 'hierarchical':
             centroids[cluster] = np.median(training_data[samples_in_cluster], 
@@ -371,7 +372,7 @@ def experiment_1(N_iter, data_flags, method = 'k-means', test_set_flag = True):
         SPADE_files = pkg_resources.resource_filename(__name__,
                           'data/SPADE_test_sets')
         
-        for i in xrange(1, 4):                  
+        for i in range(1, 4):                  
             with open(SPADE_files + '/training_{0}.txt'.format(i), 'r') as f:
                 training_set = np.loadtxt(f, dtype = int, delimiter = '\t')
                 
@@ -401,7 +402,7 @@ def experiment_2(data_file_name, k, sampling_fraction = 0.2, N_runs = 50):
 
     N_samples = data.shape[0]
 
-    for i in xrange(1, 51):
+    for i in range(1, 51):
         with open(output_directory + '/training_{}.txt'.format(i), 'w') as f:
             np.savetxt(f, np.arange(N_samples), fmt = '%d')
 
@@ -416,7 +417,7 @@ def experiment_2(data_file_name, k, sampling_fraction = 0.2, N_runs = 50):
 
     name_tags = []
 
-    for i in xrange(50):
+    for i in range(50):
         with NamedTemporaryFile('w', suffix = '.h5', delete = True, dir = './') as f:
             name_tag = ECLR.ECLAIR_processing(f.name, data_info,
                            clustering_parameters, cc_parameters,
@@ -443,7 +444,7 @@ def experiment_3():
 
     max_N_clusters = 50
  
-    name_tags = ['training_{0}'.format(i) for i in xrange(1, 11)]
+    name_tags = ['training_{0}'.format(i) for i in range(1, 11)]
     
     SPADE_files = pkg_resources.resource_filename(__name__,
                       'data/SPADE_same_dataset')
@@ -451,7 +452,7 @@ def experiment_3():
     with open(SPADE_files + '/training.txt', 'r') as f:
         training_set = np.loadtxt(f, dtype = int, delimiter = '\t')
             
-    for i in xrange(1, 11):
+    for i in range(1, 11):
         with open(output_directory + '/training_{0}.txt'.format(i), 'w') as f:
             np.savetxt(f, training_set, fmt = '%d', delimiter = '\t')
 

@@ -34,7 +34,7 @@ In: International Journal of Pattern Recognition and Artificial Intelligence,
 """
 
 
-from __future__ import print_function
+
 
 import Cluster_Ensembles as CE       
 
@@ -43,7 +43,7 @@ import munkres                       # Hungarian or Kuhn-Munkres algorithm
                                      # for the maximum weight bipartite 
                                      # graph matching problem
 import numpy as np
-from sys import maxint
+from sys import maxsize
 import tables
 from tempfile import NamedTemporaryFile
 
@@ -70,7 +70,7 @@ def get_cluster_runs(N_samples, N_iterations, possible_cluster_labels):
                                       N_iterations)
 
     cluster_runs = np.empty((N_iterations, N_samples), dtype = float)    
-    for i in xrange(N_iterations):
+    for i in range(N_iterations):
         cluster_runs[i] = possible_cluster_labels[random_choices[i]]
 
     return cluster_runs
@@ -81,7 +81,7 @@ def get_cc_labels(N_samples, N_clusters, N_iterations, N_comparisons):
     possible_cluster_labels = get_partition_space(N_samples, N_clusters)
 
     cc_labels = np.empty((N_comparisons, N_samples), dtype = int)
-    for i in xrange(N_comparisons):
+    for i in range(N_comparisons):
         cluster_runs = get_cluster_runs(N_samples, N_iterations, possible_cluster_labels)
   
         with NamedTemporaryFile('w', suffix = '.h5', delete = True, dir = './') as f:
@@ -106,12 +106,12 @@ def solve_assignment_problem(old_labels_matrix):
     new_labels_matrix[ref_ind] = old_labels_matrix[ref_ind]
 
     ref_cc_labels = old_labels_matrix[ref_ind]
-    for i in xrange(N_comparisons):
+    for i in range(N_comparisons):
         if i != ref_ind:
             cc_labels_i = old_labels_matrix[i]
 
             cost_matrix = np.zeros((N_clusters, N_clusters), dtype = int)
-            for j in xrange(N_samples):
+            for j in range(N_samples):
                 cost_matrix[cc_labels_i[j], ref_cc_labels[j]] += 1
 
             mx = cost_matrix.max()
@@ -130,7 +130,7 @@ def solve_assignment_problem(old_labels_matrix):
                     if cost < min_cost:
                         min_cost = cost
                         indices = p
-                indices = {i:indices[i] for i in xrange(len(indices))}
+                indices = {i:indices[i] for i in range(len(indices))}
             else:
                 m = munkres.Munkres()
                 indices = dict(m.compute(cost_matrix))
@@ -139,7 +139,7 @@ def solve_assignment_problem(old_labels_matrix):
                 assert isinstance(i, int) and 0 <= i < N_clusters
                 return indices[i]
 
-            new_labels_matrix[i] = map(_f, cc_labels_i)
+            new_labels_matrix[i] = list(map(_f, cc_labels_i))
 
     return new_labels_matrix
 
@@ -156,8 +156,8 @@ def test_convergence(f, N_samples, N_clusters, N_iterations, N_comparisons):
     np.savetxt(f, cc_labels, fmt = '%d', delimiter = ' ')
 
     identical_counter = 0
-    for i in xrange(N_comparisons):
-        for j in xrange(N_comparisons):
+    for i in range(N_comparisons):
+        for j in range(N_comparisons):
             if j != i and np.array_equal(cc_labels[i], cc_labels[j]):
                 identical_counter += 1
 
